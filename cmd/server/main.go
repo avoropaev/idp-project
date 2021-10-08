@@ -1,10 +1,14 @@
 package main
 
 import (
-	app "github.com/vseinstrumentiru/lego/v2/app"
+	legoapp "github.com/vseinstrumentiru/lego/v2/app"
 	"github.com/vseinstrumentiru/lego/v2/server"
+	"github.com/vseinstrumentiru/lego/v2/transport/http"
 )
 
 func main() {
-	server.Run(application{}, app.WithConfig(&config{}))
+	server.Run(
+		app{HTTP: http.NewDefaultConfig()},
+		legoapp.WithConfig(&config{}),
+	)
 }

@@ -1,7 +1,8 @@
 .DS_Store
 .idea
 
-/bin/
+/bin/*
+!/bin/.gitkeep
 /dist/
 /build/
 /tmp/

@@ -1,4 +1,4 @@
-package newservice
+package code
 
 // +mga:event:dispatcher
 // Events contract
