@@ -30,6 +30,8 @@ type app struct {
 func (app app) Providers() []interface{} {
 	return []interface{}{
 		providers.ProvideCodeService,
+		providers.ProvideS1Client,
+		providers.ProvideS2Client,
 	}
 }
 
@@ -58,7 +60,7 @@ func (app app) ConfigureHTTP(router *mux.Router, cmService *codeModule.Service, 
 		Handler(jsonRPCHandler)
 
 	router.Path("/graphql").
-		Handler(graphql.NewGraphqlHandler())
+		Handler(graphql.NewGraphqlHandler(*cmService))
 
 	router.Path("/graphql/playground").
 		Handler(graphql.NewPlaygroundHandler())

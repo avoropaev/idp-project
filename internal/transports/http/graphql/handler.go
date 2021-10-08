@@ -4,6 +4,7 @@ package graphql
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	codeModule "github.com/avoropaev/idp-project/internal/app/code"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql/generated"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql/resolvers"
 	"net/http"
@@ -11,9 +12,11 @@ import (
 
 //go:generate go run github.com/99designs/gqlgen
 
-func NewGraphqlHandler() *handler.Server {
+func NewGraphqlHandler(codeService codeModule.Service) *handler.Server {
 	return handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{
-		Resolvers: &resolvers.Resolver{},
+		Resolvers: &resolvers.Resolver{
+			CodeService: codeService,
+		},
 	}))
 }
 
