@@ -6,13 +6,12 @@ package resolvers
 import (
 	"context"
 
+	"github.com/avoropaev/idp-project/internal/app/code"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql/generated"
 )
 
-func (r *queryResolver) Hashcode(ctx context.Context, code string) (*string, error) {
-	str := "example"
-
-	return &str, nil
+func (r *queryResolver) Hashcode(ctx context.Context, codeValue int64) (*string, error) {
+	return r.CodeService.HashCode(ctx, code.Code(codeValue))
 }
 
 // Query returns generated.QueryResolver implementation.
