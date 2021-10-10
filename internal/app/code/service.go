@@ -11,6 +11,7 @@ import (
 	s2Models "github.com/avoropaev/idp-project/sdk/s2sdk/models"
 	"github.com/google/uuid"
 	"strconv"
+	"sync"
 )
 
 var (
@@ -31,13 +32,15 @@ type Service interface {
 type service struct {
 	S1Client s1sdk.S1Client
 	S2Client s2sdk.S2Client
+	Rep      Repository
 }
 
 // NewService constructor
-func NewService(s1Client s1sdk.S1Client, s2Client s2sdk.S2Client) Service {
+func NewService(s1Client s1sdk.S1Client, s2Client s2sdk.S2Client, rep Repository) Service {
 	return (Service)(&service{
 		S1Client: s1Client,
 		S2Client: s2Client,
+		Rep:      rep,
 	})
 }
 
@@ -66,22 +69,37 @@ func (s *service) HashCalc(_ context.Context, code Code) (res HashCalcResponse, 
 }
 
 func (s *service) HashCode(ctx context.Context, code Code) (*string, error) {
-	req1 := s1Models.GuidGenerateRequest{
-		Code: int64(code),
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	res1, err1 := func() (*s1Models.GuidGenerateResponse, error) {
+		defer wg.Done()
+
+		req := s1Models.GuidGenerateRequest{
+			Code: int64(code),
+		}
+
+		return s.S1Client.GuidGenerate(ctx, req)
+	}()
+
+	res2, err2 := func() (*s2Models.HashCalcResponse, error) {
+		defer wg.Done()
+
+		req := s2Models.HashCalcRequest{
+			Code: int64(code),
+		}
+
+		return s.S2Client.HashCalc(ctx, req)
+	}()
+
+	wg.Wait()
+
+	if err1 != nil {
+		return nil, err1
 	}
 
-	res1, err := s.S1Client.GuidGenerate(ctx, req1)
-	if err != nil {
-		return nil, err
-	}
-
-	req2 := s2Models.HashCalcRequest{
-		Code: int64(code),
-	}
-
-	res2, err := s.S2Client.HashCalc(ctx, req2)
-	if err != nil {
-		return nil, err
+	if err2 != nil {
+		return nil, err2
 	}
 
 	if res1 == nil {
@@ -92,7 +110,12 @@ func (s *service) HashCode(ctx context.Context, code Code) (*string, error) {
 		return nil, ErrHashNotFound
 	}
 
-	result := res1.Token + "_" + res2.Hash
+	token, err := uuid.Parse(res1.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := s.Rep.GetDataByTokenAndHash(ctx, token, res2.Hash)
 
 	return &result, nil
 }

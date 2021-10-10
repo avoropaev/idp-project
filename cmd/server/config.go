@@ -6,6 +6,7 @@ import (
 	"github.com/vseinstrumentiru/lego/v2/multilog"
 	"github.com/vseinstrumentiru/lego/v2/multilog/log"
 	"github.com/vseinstrumentiru/lego/v2/transport/http"
+	"github.com/vseinstrumentiru/lego/v2/transport/postgres"
 
 	"github.com/avoropaev/idp-project/config"
 )
@@ -13,6 +14,7 @@ import (
 type Config struct {
 	App      *cfg.Application
 	HTTP     *http.Config
+	Postgres *postgres.Config
 	Log      *log.Config
 	Logger   *multilog.Config
 	Tracing  *tracing.Config

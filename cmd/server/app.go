@@ -29,6 +29,7 @@ type app struct {
 
 func (app app) Providers() []interface{} {
 	return []interface{}{
+		providers.ProvideCodeRepository,
 		providers.ProvideCodeService,
 		providers.ProvideS1Client,
 		providers.ProvideS2Client,
