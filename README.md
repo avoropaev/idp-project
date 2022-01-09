@@ -3,6 +3,8 @@
 ## Run
 
 ```bash
+cp .env.dist .env
+# fill JAEGER_ADDR
 make init
 ```
 
