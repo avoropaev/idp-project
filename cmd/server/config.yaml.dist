@@ -1,5 +1,0 @@
-app:
-  name: idp-project.server
-  datacenter: local
-  debugMode: true
-  localMode: true

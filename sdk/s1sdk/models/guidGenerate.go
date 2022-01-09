@@ -1,9 +1,9 @@
 package models
 
-type GuidGenerateRequest struct {
+type GUIDGenerateRequest struct {
 	Code int64 `json:"code"`
 }
 
-type GuidGenerateResponse struct {
+type GUIDGenerateResponse struct {
 	Token string `json:"token"`
 }

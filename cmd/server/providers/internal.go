@@ -1,14 +1,15 @@
 package providers
 
 import (
-	"database/sql/driver"
+	"database/sql"
+
 	codeModule "github.com/avoropaev/idp-project/internal/app/code"
 	"github.com/avoropaev/idp-project/sdk/s1sdk"
 	"github.com/avoropaev/idp-project/sdk/s2sdk"
 )
 
-func ProvideCodeRepository(_ driver.Connector) *codeModule.Repository {
-	rep := codeModule.NewRepository()
+func ProvideCodeRepository(db *sql.DB) *codeModule.Repository {
+	rep := codeModule.NewRepository(db)
 
 	return &rep
 }

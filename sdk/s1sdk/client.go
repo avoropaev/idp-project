@@ -14,7 +14,7 @@ import (
 var ErrCast = errors.New("cast error")
 
 type S1Client interface {
-	GuidGenerate(context.Context, models.GuidGenerateRequest) (*models.GuidGenerateResponse, error)
+	GUIDGenerate(context.Context, models.GUIDGenerateRequest) (*models.GUIDGenerateResponse, error)
 }
 
 type client struct {
@@ -22,19 +22,19 @@ type client struct {
 }
 
 type endpoints struct {
-	GuidGenerate endpoint.Endpoint
+	GUIDGenerate endpoint.Endpoint
 }
 
-func (c *client) GuidGenerate(ctx context.Context, req models.GuidGenerateRequest) (*models.GuidGenerateResponse, error) {
-	res, err := c.endpoints.GuidGenerate(ctx, req)
+func (c *client) GUIDGenerate(ctx context.Context, req models.GUIDGenerateRequest) (*models.GUIDGenerateResponse, error) {
+	res, err := c.endpoints.GUIDGenerate(ctx, req)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, ok := res.(models.GuidGenerateResponse)
+	resp, ok := res.(models.GUIDGenerateResponse)
 	if !ok {
-		return nil, fmt.Errorf("%w to %T", ErrCast, models.GuidGenerateResponse{})
+		return nil, fmt.Errorf("%w to %T", ErrCast, models.GUIDGenerateResponse{})
 	}
 
 	return &resp, nil

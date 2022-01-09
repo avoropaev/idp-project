@@ -32,7 +32,7 @@ func NewJSONRPCWithClient(serviceURL string, httpClient *http.Client) (S1Client,
 }
 
 func (c *jsonrpcclient) getJSONRPCEndpoints(url *url.URL) {
-	c.endpoints.GuidGenerate = jsonrpc.NewClient(
+	c.endpoints.GUIDGenerate = jsonrpc.NewClient(
 		url,
 		"guid.generate",
 		jsonrpc.SetClient(c.httpClient),

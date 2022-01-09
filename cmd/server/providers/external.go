@@ -1,10 +1,11 @@
 package providers
 
 import (
+	"net/http"
+
 	"github.com/avoropaev/idp-project/config"
 	"github.com/avoropaev/idp-project/sdk/s1sdk"
 	"github.com/avoropaev/idp-project/sdk/s2sdk"
-	"net/http"
 )
 
 func ProvideS1Client(cfg *config.External, client *http.Client) (s1sdk.S1Client, error) {

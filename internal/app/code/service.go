@@ -5,13 +5,14 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"strconv"
+	"sync"
+
 	"github.com/avoropaev/idp-project/sdk/s1sdk"
 	s1Models "github.com/avoropaev/idp-project/sdk/s1sdk/models"
 	"github.com/avoropaev/idp-project/sdk/s2sdk"
 	s2Models "github.com/avoropaev/idp-project/sdk/s2sdk/models"
 	"github.com/google/uuid"
-	"strconv"
-	"sync"
 )
 
 var (
@@ -45,8 +46,8 @@ func NewService(s1Client s1sdk.S1Client, s2Client s2sdk.S2Client, rep Repository
 }
 
 func (s *service) GuidGenerate(_ context.Context, code Code) (res GuidGenerateResponse, err error) {
-	if code == 1 {
-		token := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	if code >= 0 && code <= 9 {
+		token := uuid.MustParse("00000000-0000-0000-0000-00000000000" + strconv.FormatInt(int64(code), 10))
 		res.Token = &token
 	}
 
@@ -72,14 +73,14 @@ func (s *service) HashCode(ctx context.Context, code Code) (*string, error) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	res1, err1 := func() (*s1Models.GuidGenerateResponse, error) {
+	res1, err1 := func() (*s1Models.GUIDGenerateResponse, error) {
 		defer wg.Done()
 
-		req := s1Models.GuidGenerateRequest{
+		req := s1Models.GUIDGenerateRequest{
 			Code: int64(code),
 		}
 
-		return s.S1Client.GuidGenerate(ctx, req)
+		return s.S1Client.GUIDGenerate(ctx, req)
 	}()
 
 	res2, err2 := func() (*s2Models.HashCalcResponse, error) {
@@ -116,6 +117,9 @@ func (s *service) HashCode(ctx context.Context, code Code) (*string, error) {
 	}
 
 	result, err := s.Rep.GetDataByTokenAndHash(ctx, token, res2.Hash)
+	if err != nil {
+		return nil, err
+	}
 
 	return &result, nil
 }

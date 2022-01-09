@@ -73,3 +73,9 @@ buf: bin/buf ## Generate client and server stubs from the protobuf definition
 .PHONY: proto
 proto: bin/protoc bin/protoc-gen-go bin/protoc-gen-go-grpc bin/protoc-gen-kit buf ## Generate client and server stubs from the protobuf definition
 	bin/buf build -o - | protoc --descriptor_set_in=/dev/stdin --go_out=paths=source_relative:api --go-grpc_out=paths=source_relative:api --kit_out=paths=source_relative:api $(shell bin/buf build -o - | bin/buf ls-files --input - | grep -v google)
+
+init:
+	docker-compose up -d
+	make build-migrator
+	build/migrator migrate up
+	make run-server

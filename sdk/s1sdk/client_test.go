@@ -25,9 +25,9 @@ type s1TestSuite struct {
 
 var (
 	fixtures = struct {
-		responseGuidGenerate *models.GuidGenerateResponse
+		responseGuidGenerate *models.GUIDGenerateResponse
 	}{
-		responseGuidGenerate: &models.GuidGenerateResponse{
+		responseGuidGenerate: &models.GUIDGenerateResponse{
 			Token: "test-token",
 		},
 	}
@@ -67,7 +67,7 @@ func s1Handler(w http.ResponseWriter, r *http.Request) {
 		result := struct {
 			JSONRPC string `json:"jsonrpc"`
 			ID      int64  `json:"id"`
-			Result  models.GuidGenerateResponse
+			Result  models.GUIDGenerateResponse
 		}{
 			JSONRPC: "2.0",
 			ID:      time.Now().Unix(),
@@ -84,7 +84,7 @@ func (ex *s1TestSuite) TearDownSuite() {
 }
 
 func (ex *s1TestSuite) TestClient_GuidGenerate() {
-	resp, err := ex.client.GuidGenerate(context.Background(), models.GuidGenerateRequest{})
+	resp, err := ex.client.GUIDGenerate(context.Background(), models.GUIDGenerateRequest{})
 
 	ex.Require().NoError(err)
 	ex.Require().Equal(resp, fixtures.responseGuidGenerate)

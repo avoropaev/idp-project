@@ -14,7 +14,7 @@ func DecodeGuidGenerate(_ context.Context, response jsonrpc.Response) (interface
 		return nil, response.Error
 	}
 
-	var res models.GuidGenerateResponse
+	var res models.GUIDGenerateResponse
 	if err := json.Unmarshal(response.Result, &res); err != nil {
 		return nil, err
 	}

@@ -2,12 +2,13 @@
 package graphql
 
 import (
+	"net/http"
+
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	codeModule "github.com/avoropaev/idp-project/internal/app/code"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql/generated"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql/resolvers"
-	"net/http"
 )
 
 //go:generate go run github.com/99designs/gqlgen

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+
+	"github.com/avoropaev/idp-project/cmd/server/middleware"
 	"github.com/avoropaev/idp-project/cmd/server/providers"
 	"github.com/avoropaev/idp-project/internal/app/code/codedriver"
 	appHttp "github.com/avoropaev/idp-project/internal/transports/http/jsonrpc"
@@ -11,16 +13,15 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sagikazarmark/kitx/correlation"
 	"github.com/streadway/handy/encoding"
-	"github.com/vseinstrumentiru/lego/v2/multilog"
+	"github.com/vseinstrumentiru/lego/v2/log"
 	legoHttp "github.com/vseinstrumentiru/lego/v2/transport/http"
-	"github.com/vseinstrumentiru/lego/v2/transport/http/middleware"
+	legoMiddleware "github.com/vseinstrumentiru/lego/v2/transport/http/middleware"
 
-	appKitEndpoint "github.com/sagikazarmark/appkit/endpoint"
+	"net/http"
 
 	codeModule "github.com/avoropaev/idp-project/internal/app/code"
 	"github.com/avoropaev/idp-project/internal/transports/http/graphql"
 	kitXEndpoint "github.com/sagikazarmark/kitx/endpoint"
-	"net/http"
 )
 
 type app struct {
@@ -36,7 +37,7 @@ func (app app) Providers() []interface{} {
 	}
 }
 
-func (app app) ConfigureHTTP(router *mux.Router, cmService *codeModule.Service, logger multilog.Logger) {
+func (app app) ConfigureHTTP(router *mux.Router, cmService *codeModule.Service, logger log.Logger) {
 	router.StrictSlash(true)
 
 	endpointMiddleware := []endpoint.Middleware{
@@ -46,7 +47,7 @@ func (app app) ConfigureHTTP(router *mux.Router, cmService *codeModule.Service, 
 
 			return name
 		})),
-		appKitEndpoint.LoggingMiddleware(logger),
+		middleware.LoggingMiddleware(logger),
 	}
 
 	mw := kitXEndpoint.Combine(endpointMiddleware...)
@@ -68,9 +69,9 @@ func (app app) ConfigureHTTP(router *mux.Router, cmService *codeModule.Service, 
 
 	router.Use(
 		encoding.Gzipper(5),
-		middleware.LogRequestWithMaxLenMiddleware(5*1024),
-		middleware.LogResponseWithMaxLenMiddleware(5*1024),
-		middleware.TraceTagsMiddleware(middleware.TraceTagsMiddlewareConfig{
+		legoMiddleware.LogRequestWithMaxLenMiddleware(5*1024),
+		legoMiddleware.LogResponseWithMaxLenMiddleware(5*1024),
+		legoMiddleware.TraceTagsMiddleware(legoMiddleware.TraceTagsMiddlewareConfig{
 			"x-trace-request-dc":  "request.dc",
 			"x-trace-request-app": "request.app",
 		}),
